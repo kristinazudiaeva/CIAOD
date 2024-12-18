@@ -3,16 +3,13 @@ from datetime import datetime, timedelta
 import tkinter as tk
 from tkinter import Button, END, Text
 
-# Проверка временных интервалов
 def is_time_overlap(start1, end1, start2, end2):
     return max(start1, start2) <= min(end1, end2)
 
-# Окончание маршрута
 def calculate_route_end(start_time, route_duration):
     full_datetime = datetime.combine(datetime.today(), start_time) + route_duration
     return full_datetime.time()
 
-# Генерация
 def generate_route_times():
     route_times = []
     for start_hour, end_hour in peak_hours:
@@ -27,18 +24,16 @@ def generate_route_times():
             current_time += traffic_route_time
     return route_times
 
-# Проверка типа A
 def validate_driver_A_schedule(schedule):
     for driver, routes in schedule.items():
         work_time = timedelta()
         for start, end in routes:
             route_duration = datetime.combine(datetime.today(), end) - datetime.combine(datetime.today(), start)
             work_time += route_duration
-            if work_time > shift_duration_A - timedelta(hours=1):  # Учитываем час на обед
+            if work_time > shift_duration_A - timedelta(hours=1): 
                 return False
     return True
 
-# Проверка типа B
 def validate_driver_B_schedule(schedule):
     for driver, routes in schedule.items():
         for i in range(1, len(routes)):
@@ -49,7 +44,6 @@ def validate_driver_B_schedule(schedule):
                 return False
     return True
 
-# Оценки пригодности
 def fitness(schedule, driver_type):
     penalties = 0
     for driver, routes in schedule.items():
@@ -65,7 +59,6 @@ def fitness(schedule, driver_type):
         penalties += 10
     return -penalties
 
-# Популяции
 def create_population(driver_list):
     population = []
     for _ in range(population_size):
@@ -78,7 +71,6 @@ def create_population(driver_list):
         population.append(schedule)
     return population
 
-# Скрещивание
 def crossover(parent1, parent2, driver_list):
     child = {driver: [] for driver in driver_list}
     for driver in driver_list:
@@ -88,17 +80,15 @@ def crossover(parent1, parent2, driver_list):
             child[driver] = parent2[driver]
     return child
 
-# Мутация
 def mutate(schedule, driver_list):
     driver = random.choice(driver_list)
     if schedule[driver]:
-        schedule[driver].pop(random.randint(0, len(schedule[driver]) - 1))  # Удаление случайного рейса
+        schedule[driver].pop(random.randint(0, len(schedule[driver]) - 1))  
     start_time = random.choice(route_times)
     end_time = calculate_route_end(start_time, traffic_route_time)
     schedule[driver].append((start_time, end_time))
     return schedule
 
-# алгоритм
 def genetic_schedule(driver_list, driver_type):
     population = create_population(driver_list)
     for generation in range(max_generations):
@@ -115,7 +105,6 @@ def genetic_schedule(driver_list, driver_type):
     best_schedule = max(population, key=lambda x: fitness(x, driver_type))
     return best_schedule
 
-# Отображение
 def display_schedule(schedule):
     schedule_text.delete(1.0, END)
     for driver, routes in schedule.items():
@@ -124,7 +113,6 @@ def display_schedule(schedule):
             schedule_text.insert(END, f"  Рейс с {start.strftime('%H:%M')} до {end.strftime('%H:%M')}\n")
         schedule_text.insert(END, "\n")
 
-# Генерация типа A
 def generate_schedule_A():
     try:
         global num_routes
@@ -142,7 +130,6 @@ def generate_schedule_A():
     except ValueError:
         schedule_text.insert(END, "\nОшибка: Введите корректные данные.\n")
 
-# Генерация типа B
 def generate_schedule_B():
     try:
         global num_routes
@@ -170,7 +157,6 @@ shift_duration_B = timedelta(hours=24)
 max_generations = 50
 population_size = 100
 
-# Интерфейса
 root = tk.Tk()
 root.title("Генетический алгоритм")
 root.geometry("600x500")
