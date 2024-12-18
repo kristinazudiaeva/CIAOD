@@ -2,18 +2,15 @@ import random
 import tkinter as tk
 from tkinter import Button, END, Text
 
-# Пересечения времени
 def is_time_overlap(start1, end1, routes):
     for start2, end2 in routes:
         if start1 <= end2 and start2 <= end1:
             return True  
     return False
 
-# Проверка
 def is_within_work_hours(start_time, end_time, work_start, work_end):
     return work_start <= start_time < work_end and work_start < end_time <= work_end
 
-# Окончание маршрута
 def calculate_route_end(start_time, route_duration):
     return start_time + route_duration
 
@@ -21,7 +18,7 @@ def schedule_routes(driver_list, num_routes, traffic_route_time, work_hours):
     schedule = {driver: [] for driver in driver_list}  # Расписание для каждого водителя
     all_routes = []
 
-    # Генерация всех маршрутов
+    
     for _ in range(num_routes):
         start_time = random.choice(route_times)
         end_time = calculate_route_end(start_time, traffic_route_time)
@@ -48,7 +45,6 @@ def schedule_routes(driver_list, num_routes, traffic_route_time, work_hours):
 
     return schedule
 
-# Отображение расписания
 def display_schedule(schedule):
     schedule_text.delete(1.0, END)
     for driver, routes in schedule.items():
@@ -57,7 +53,6 @@ def display_schedule(schedule):
             schedule_text.insert(END, f"  Рейс с {start}:00 до {end}:00\n")
         schedule_text.insert(END, "\n")
 
-# Генерация типа A
 def generate_schedule_A():
     try:
         num_routes = int(num_routes_entry.get())
@@ -74,7 +69,6 @@ def generate_schedule_A():
     except ValueError:
         schedule_text.insert(END, "\nОшибка: Введите корректное число маршрутов.\n")
 
-# Генерация типа B
 def generate_schedule_B():
     try:
         num_routes = int(num_routes_entry.get())
@@ -96,7 +90,6 @@ traffic_route_time = 1  # Продолжительность маршрута в
 drivers_A = ["Водитель_A1", "Водитель_A2", "Водитель_A3"]
 drivers_B = ["Водитель_B1", "Водитель_B2"]
 
-# Интерфейс
 root = tk.Tk()
 root.title("Распределение маршрутов")
 root.geometry("600x450")
